@@ -24,6 +24,10 @@ const userSchema = new mongoose.Schema({
     followers: {
         type: [mongoose.Types.Schema.ObjectId],
         ref: 'Users'
+    },
+    favourites: {
+        type: [mongoose.Types.Schema.ObjectId],
+        ref: 'Articles'
     }
 }, { timestamps: true });
 
