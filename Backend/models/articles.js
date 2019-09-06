@@ -10,19 +10,19 @@ const articleSchema = new mongoose.Schema({
         required: true
     },
     author: {
-        type: mongoose.Types.Schema.ObjectId,
+        type: mongoose.Schema.Types.ObjectId,
         ref: 'Users'
     },
     likes: {
-        type: [mongoose.Types.Schema.ObjectId],
+        type: [mongoose.Schema.Types.ObjectId],
         ref: 'Users'
     },
     tags: {
-        type: [mongoose.Types.Schema.ObjectId],
+        type: [mongoose.Schema.Types.ObjectId],
         ref: 'Tags'
     },
     comments: {
-        type: [mongoose.Types.Schema.ObjectId],
+        type: [mongoose.Schema.Types.ObjectId],
         ref: 'Comments'
     }
 }, { timestamps: true });
