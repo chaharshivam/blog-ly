@@ -11,26 +11,30 @@ const userSchema = new mongoose.Schema({
         type: String,
         unique: true,
         required: true,
-        match: match: new RegExp('@.*[.]')
+        match: new RegExp('@.*[.]')
     },
     password: {
         type: String,
         required: true
     },
     following: {
-        type: [mongoose.Types.Schema.ObjectId],
+        type: [mongoose.Schema.Types.ObjectId],
         ref: 'Users'
     },
     followers: {
-        type: [mongoose.Types.Schema.ObjectId],
+        type: [mongoose.Schema.Types.ObjectId],
         ref: 'Users'
+    },
+    favourites: {
+        type: [mongoose.Schema.Types.ObjectId],
+        ref: 'Articles'
     }
 }, { timestamps: true });
 
-userSchema.pre('save', function (next) => {
+userSchema.pre('save', function (next) {
     const user = this;
     
-    bcrypt.hash(user.password, 8, function (err, hash) => {
+    bcrypt.hash(user.password, 8, function (err, hash) {
         if (err) return next(err);
 
         user.password = hash;
