@@ -6,12 +6,12 @@ const tagSchema = new mongoose.Schema({
         unique: true,
         lowercase: true
     },
-    articles: {
-        type: [mongoose.Schema.Types.ObjectId],
-        ref: 'Articles'
-    }
+    articles: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Article'
+    }]
 }, { timestamps: true });
 
-const Tags = mongoose.model('Tags', tagSchema);
+const Tag = mongoose.model('Tag', tagSchema);
 
-module.exports = Tags;
+module.exports = Tag;

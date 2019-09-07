@@ -11,22 +11,22 @@ const articleSchema = new mongoose.Schema({
     },
     author: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Users'
+        ref: 'User'
     },
-    likes: {
-        type: [mongoose.Schema.Types.ObjectId],
-        ref: 'Users'
-    },
-    tags: {
-        type: [mongoose.Schema.Types.ObjectId],
-        ref: 'Tags'
-    },
-    comments: {
-        type: [mongoose.Schema.Types.ObjectId],
-        ref: 'Comments'
-    }
+    likes: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+    }],
+    tags: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Tag'
+    }],
+    comments: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Comment'
+    }]
 }, { timestamps: true });
 
-const Articles = mongoose.model('Articles', articleSchema);
+const Article = mongoose.model('Articles', articleSchema);
 
-module.exports = Articles;
+module.exports = Article;

@@ -17,18 +17,18 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    following: {
-        type: [mongoose.Schema.Types.ObjectId],
-        ref: 'Users'
-    },
-    followers: {
-        type: [mongoose.Schema.Types.ObjectId],
-        ref: 'Users'
-    },
-    favourites: {
-        type: [mongoose.Schema.Types.ObjectId],
-        ref: 'Articles'
-    }
+    following: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+    }],
+    followers: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+    }],
+    favourites: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Article'
+    }]
 }, { timestamps: true });
 
 userSchema.pre('save', function (next) {
@@ -50,6 +50,6 @@ userSchema.methods.validatePassword = function (textPassword, cb) {
     });
 };
 
-const Users = mongoose.model('Users', userSchema);
+const User = mongoose.model('Users', userSchema);
 
-module.exports = Users;
+module.exports = User;
