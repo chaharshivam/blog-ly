@@ -11,7 +11,7 @@ exports.verifyToken = function(req, res, next) {
         jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
             
             if (err) return res.status(400).json({ error: "Invalid Token"});
-            console.log(err, decoded);
+            // console.log(err, decoded);
             req.userId = decoded.userId;
 
             next();

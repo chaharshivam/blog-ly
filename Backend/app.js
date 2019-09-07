@@ -13,6 +13,8 @@ const app = express();
 
 // Connect to Mongo DB
 mongoose.connect(process.env.DB_URL, { useNewUrlParser: true });
+mongoose.set('useFindAndModify', false);
+mongoose.set('useCreateIndex', true);
 
 app.use(logger('dev'));
 app.use(express.json());
