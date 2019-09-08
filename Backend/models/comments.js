@@ -6,15 +6,15 @@ const commentSchema = new mongoose.Schema({
         required: true
     },
     author: {
-        type: mongoose.Types.Schema.ObjectId,
-        ref: 'Users'
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
     },
-    likes: {
-        type: [mongoose.Types.Schema.ObjectId],
-        ref: 'Users'
-    }
+    likes: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+    }]
 }, { timestamps: true });
 
 const Comments = mongoose.model('Comments', commentSchema);
 
-module.exports = Comments;
+module.exports = Comment;

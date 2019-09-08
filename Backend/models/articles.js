@@ -10,23 +10,23 @@ const articleSchema = new mongoose.Schema({
         required: true
     },
     author: {
-        type: mongoose.Types.Schema.ObjectId,
-        ref: 'Users'
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
     },
-    likes: {
-        type: [mongoose.Types.Schema.ObjectId],
-        ref: 'Users'
-    },
-    tags: {
-        type: [mongoose.Types.Schema.ObjectId],
-        ref: 'Tags'
-    },
-    comments: {
-        type: [mongoose.Types.Schema.ObjectId],
-        ref: 'Comments'
-    }
+    likes: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+    }],
+    tags: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Tag'
+    }],
+    comments: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Comment'
+    }]
 }, { timestamps: true });
 
-const Articles = mongoose.model('Articles', articleSchema);
+const Article = mongoose.model('Articles', articleSchema);
 
-module.exports = Articles;
+module.exports = Article;

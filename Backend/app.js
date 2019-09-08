@@ -7,11 +7,14 @@ const mongoose = require('mongoose');
 
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
+const articlesRouter = require('./routes/articles');
 
 const app = express();
 
 // Connect to Mongo DB
 mongoose.connect(process.env.DB_URL, { useNewUrlParser: true });
+mongoose.set('useFindAndModify', false);
+mongoose.set('useCreateIndex', true);
 
 app.use(logger('dev'));
 app.use(express.json());
@@ -20,6 +23,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/api', indexRouter);
 app.use('/api/users', usersRouter);
+app.use('/api/articles', articlesRouter);
 
 // Error Handler
 app.use( (err, req, res, next) => {
