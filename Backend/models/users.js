@@ -7,6 +7,7 @@ const userSchema = new mongoose.Schema({
         unique: true,
         minlength: 4
     },
+    name: String,
     email: {
         type: String,
         unique: true,
@@ -15,7 +16,7 @@ const userSchema = new mongoose.Schema({
     },
     password: {
         type: String,
-        required: true
+        default: ''
     },
     following: [{
         type: mongoose.Schema.Types.ObjectId,
