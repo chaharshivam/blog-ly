@@ -48,7 +48,7 @@ router.post('/login', function(req, res, next) {
 
 /* PATCH Update User */
 router.patch('/:id', auth.verifyToken, function(req, res, next) {
-  console.log(req.userId, req.params.id);
+  
   if (req.userId === req.params.id) {
     Users.findByIdAndUpdate(req.params.id, req.body, (err, updatedUser) => {
       if (err) return next(err);
@@ -62,4 +62,5 @@ router.patch('/:id', auth.verifyToken, function(req, res, next) {
   }
 
 });
+
 module.exports = router;

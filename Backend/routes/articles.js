@@ -3,6 +3,7 @@ const router = express.Router();
 const Article = require('../models/articles');
 const Tag = require('../models/tags');
 const Comment = require('../models/comments');
+const User = require('../models/users');
 const auth = require('../middlewares/auth');
 
 /* GET all articles */
@@ -90,6 +91,22 @@ router.delete('/:id', auth.verifyToken, (req, res, next) => {
     });
 });
 
+/* POST - Like an article */
+router.post('/:id/like', auth.verifyToken, (req, res, next) => {
+    Article.findByIdAndUpdate(req.params.id, { $inc: { likes: 1 } }, (err, foundArticle) => {
+        if (err) return next(err);
+
+        User.findByIdAndUpdate(req.userId, { $push: { favourites: foundArticle.id } }, (err, updatedUser) => {
+            if (err) return next(err);
+            
+            res.json({ message: "Post liked" });
+        });
+
+    });
+});
+
+/* TODO: unlike logic */
+
 /* GET - get comments on article */
 router.get('/:id/comments', (req, res, next) => {
     Article
@@ -97,7 +114,7 @@ router.get('/:id/comments', (req, res, next) => {
     .populate({
         path: "comments"
     })
-    .exec( (err, article) => {
+    .exec((err, article) => {
         if (err) return next(err);
         
         res.json({ comments: article.comments });
