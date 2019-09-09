@@ -8,6 +8,7 @@ const mongoose = require('mongoose');
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
 const articlesRouter = require('./routes/articles');
+const commentsRouter = require('./routes/comments');
 
 const app = express();
 
@@ -24,7 +25,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/api', indexRouter);
 app.use('/api/users', usersRouter);
 app.use('/api/articles', articlesRouter);
-
+app.use('/api/comments', commentsRouter);
 // Error Handler
 app.use( (err, req, res, next) => {
 	res.status(err.status || 500);
