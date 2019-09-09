@@ -12,9 +12,13 @@ const commentSchema = new mongoose.Schema({
     likes: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
-    }]
+    }],
+    article: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Article'
+    }
 }, { timestamps: true });
 
-const Comments = mongoose.model('Comments', commentSchema);
+const Comment = mongoose.model('Comment', commentSchema);
 
 module.exports = Comment;

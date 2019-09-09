@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const Article = require('../models/articles');
 const Tag = require('../models/tags');
+const Comment = require('../models/comments');
 const auth = require('../middlewares/auth');
 
 /* GET all articles */
@@ -13,6 +14,7 @@ router.get('/', function (req, res, next) {
     });
 });
 
+/* POST - create article */
 router.post('/', auth.verifyToken, function (req, res, next) {
 
     let { tags, ...others } = req.body;
@@ -35,7 +37,6 @@ router.post('/', auth.verifyToken, function (req, res, next) {
                     if (updatedArticle.tags.length == tags.length) {
                         return res.status(200).json({ message: "article successfully created" });
                     }
-
                 });
             });
         });
@@ -52,5 +53,70 @@ router.get('/:id', auth.verifyToken, function (req, res, next) {
     });
 });
 
-module.exports = router;
+/* PATCH - Update an article */ 
+router.patch('/:id', auth.verifyToken, (req, res, next) => {
+    // Allow only title and description updates
+    Article.findById(req.params.id, (err, foundArticle) => {
+        if (err) return next(err);
 
+        if (foundArticle.author == req.userId) {
+            Article.findByIdAndUpdate(foundArticle.id, req.body, (err, updatedArticle) => {
+                if (err) next(err);
+
+                res.json({ updatedArticle });
+            });
+        } else {
+            res.json({ message: "Not Authorized" });
+        }
+    });
+});
+
+/* DELETE - Delete an article */
+router.delete('/:id', auth.verifyToken, (req, res, next) => {
+    Article.findById(req.params.id, (err, foundArticle) => {
+        if (err) return next(err);
+
+        if (foundArticle.author == req.userId) {
+            Article.findByIdAndDelete(foundArticle.id, (err, deletedArticle) => {
+                if (err) next(err);
+
+                /* TODO: Remove article from Tag and delete Comments of that article */
+                
+                res.json({ message: "Article deleted successfully" });
+            });
+        } else {
+            res.json({ message: "Not Authorized" });
+        }
+    });
+});
+
+/* GET - get comments on article */
+router.get('/:id/comments', (req, res, next) => {
+    Article
+    .findById(req.params.id)
+    .populate({
+        path: "comments"
+    })
+    .exec( (err, article) => {
+        if (err) return next(err);
+        
+        res.json({ comments: article.comments });
+    });
+});
+
+/* POST - create comment on article */
+router.post('/:id/comments', auth.verifyToken, (req, res, next) => {
+    const comment = { ...req.body, author: req.userId, article: req.params.id };
+    
+    Comment.create(comment, (err, createdComment) => {
+        if (err) return next(err);
+
+        Article.findByIdAndUpdate(req.params.id, { $push: { comments: createdComment.id } }, (err, updatedArticle) => {
+            if (err) return next(err);
+
+            res.json({ message: "Comment Added!" });
+        });
+    });
+});
+
+module.exports = router;
