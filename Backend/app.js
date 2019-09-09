@@ -4,6 +4,7 @@ const express = require('express');
 const path = require('path');
 const logger = require('morgan');
 const mongoose = require('mongoose');
+const passport = require('passport');
 
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
@@ -21,6 +22,10 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(passport.initialize());
+
+// passport Strategy
+require('../Backend/middlewares/passport');
 
 app.use('/api', indexRouter);
 app.use('/api/users', usersRouter);
