@@ -13,10 +13,10 @@ const articleSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
     },
-    likes: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User'
-    }],
+    likes: {
+        type: Number,
+        default: 0
+    },
     tags: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Tag'
