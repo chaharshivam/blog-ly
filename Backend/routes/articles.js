@@ -1,10 +1,13 @@
 const express = require('express');
+const showdown = require('showdown');
 const router = express.Router();
 const Article = require('../models/articles');
 const Tag = require('../models/tags');
 const Comment = require('../models/comments');
 const User = require('../models/users');
 const auth = require('../middlewares/auth');
+
+const convertor = new showdown.Converter({ noHeaderId: true });
 
 /* GET all articles */
 router.get('/', function (req, res, next) {
@@ -50,6 +53,8 @@ router.get('/:id', auth.verifyToken, function (req, res, next) {
     Article.findById(req.params.id, (err, article) => {
         if (err) return next(err);
 
+        article.description = convertor.makeHtml(article.description);
+
         res.json({ article });
     });
 });
@@ -93,16 +98,26 @@ router.delete('/:id', auth.verifyToken, (req, res, next) => {
 
 /* POST - Like an article */
 router.post('/:id/like', auth.verifyToken, (req, res, next) => {
-    Article.findByIdAndUpdate(req.params.id, { $inc: { likes: 1 } }, (err, foundArticle) => {
+
+    User.findById(req.userId, (err, foundUser) => {
         if (err) return next(err);
 
-        User.findByIdAndUpdate(req.userId, { $push: { favourites: foundArticle.id } }, (err, updatedUser) => {
-            if (err) return next(err);
-            
-            res.json({ message: "Post liked" });
-        });
-
+        if (foundUser.favourites.includes(req.params.id)) {
+            return res.json({ message: "Already Liked!" });
+        } else {
+            Article.findByIdAndUpdate(req.params.id, { $inc: { likes: 1 } }, (err, foundArticle) => {
+                if (err) return next(err);
+                
+                User.findByIdAndUpdate(req.userId, { $push: { favourites: req.params.id } }, { upsert: true }, (err, updatedUser) => {
+                    if (err) return next(err);
+                    
+                    res.json({ message: "Post liked" });
+                });
+        
+            });
+        }
     });
+
 });
 
 /* TODO: unlike logic */

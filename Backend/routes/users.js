@@ -58,9 +58,7 @@ router.patch('/:id', auth.verifyToken, function(req, res, next) {
   } else {
 
     return res.status(401).json({ message: "Not Authorized" });
-  
   }
-
 });
 
 module.exports = router;

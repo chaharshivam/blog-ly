@@ -31,8 +31,9 @@ app.use('/api', indexRouter);
 app.use('/api/users', usersRouter);
 app.use('/api/articles', articlesRouter);
 app.use('/api/comments', commentsRouter);
+
 // Error Handler
-app.use( (err, req, res, next) => {
+app.use((err, req, res, next) => {
 	res.status(err.status || 500);
 	res.json({ message: "Error Occured" });
 });
