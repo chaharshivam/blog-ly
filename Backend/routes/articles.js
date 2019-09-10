@@ -1,10 +1,13 @@
 const express = require('express');
+const showdown = require('showdown');
 const router = express.Router();
 const Article = require('../models/articles');
 const Tag = require('../models/tags');
 const Comment = require('../models/comments');
 const User = require('../models/users');
 const auth = require('../middlewares/auth');
+
+const convertor = new showdown.Converter({ noHeaderId: true });
 
 /* GET all articles */
 router.get('/', function (req, res, next) {
@@ -49,6 +52,8 @@ router.post('/', auth.verifyToken, function (req, res, next) {
 router.get('/:id', auth.verifyToken, function (req, res, next) {
     Article.findById(req.params.id, (err, article) => {
         if (err) return next(err);
+
+        article.description = convertor.makeHtml(article.description);
 
         res.json({ article });
     });
