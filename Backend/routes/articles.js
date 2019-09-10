@@ -98,16 +98,26 @@ router.delete('/:id', auth.verifyToken, (req, res, next) => {
 
 /* POST - Like an article */
 router.post('/:id/like', auth.verifyToken, (req, res, next) => {
-    Article.findByIdAndUpdate(req.params.id, { $inc: { likes: 1 } }, (err, foundArticle) => {
+
+    User.findById(req.userId, (err, foundUser) => {
         if (err) return next(err);
 
-        User.findByIdAndUpdate(req.userId, { $push: { favourites: foundArticle.id } }, (err, updatedUser) => {
-            if (err) return next(err);
-            
-            res.json({ message: "Post liked" });
-        });
-
+        if (foundUser.favourites.includes(req.params.id)) {
+            return res.json({ message: "Already Liked!" });
+        } else {
+            Article.findByIdAndUpdate(req.params.id, { $inc: { likes: 1 } }, (err, foundArticle) => {
+                if (err) return next(err);
+                
+                User.findByIdAndUpdate(req.userId, { $push: { favourites: req.params.id } }, { upsert: true }, (err, updatedUser) => {
+                    if (err) return next(err);
+                    
+                    res.json({ message: "Post liked" });
+                });
+        
+            });
+        }
     });
+
 });
 
 /* TODO: unlike logic */
