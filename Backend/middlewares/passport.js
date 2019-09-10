@@ -24,9 +24,9 @@ passport.use(new GithubStrategy({
 
 					return done(null, createdUser);
 				});
-			}
-
-			return done(null, foundUser);
+			} else {
+                return done(null, foundUser);
+            }
 		});
     }
 ));
@@ -53,9 +53,9 @@ passport.use(new GoogleStrategy({
 
                     return done(null, createdUser);
                 });
+            } else {
+                return done(null, foundUser);
             }
-
-            return done(null, foundUser);
         });
     }
 ));
