@@ -13,7 +13,7 @@ exports.all =  async (req, res, next) => {
        const articles = await Article.find().skip(10 * req.query.page).limit(10);
        res.status(200).json({ articles });
     } catch (err) {
-        next(err);
+        next (err);
     }
 }
 // Create an article
@@ -45,96 +45,91 @@ exports.create = (req, res, next) => {
     });
 }
 // Read an article
-exports.read = (req, res, next) => {
-    Article.findById(req.params.id, (err, article) => {
-        if (err) return next(err);
-
-        article.description = convertor.makeHtml(article.description);
+exports.read =  async (req, res, next) => {
+    try {
+        const article = await Article.findById(req.params.id);
+        article.description = await convertor.makeHtml(article.description);
 
         res.json({ article });
-    });
+    } catch (err) {
+        console.log(err);
+        next (err);
+    }
 }
 // Update an article
-exports.update = (req, res, next) => {
+exports.update = async (req, res, next) => {
     // Allow only title and description updates
-    Article.findById(req.params.id, (err, foundArticle) => {
-        if (err) return next(err);
+    try {
+        const foundArticle = await Article.findById(req.params.id);
 
         if (foundArticle.author == req.userId) {
-            Article.findByIdAndUpdate(foundArticle.id, req.body, (err, updatedArticle) => {
-                if (err) next(err);
+            const updatedArticle = await Article.findByIdAndUpdate(foundArticle.id, req.body, { new: true });
 
-                res.json({ updatedArticle });
-            });
+            res.json({ updatedArticle });
         } else {
             res.json({ message: "Not Authorized" });
         }
-    });
+    } catch (err) {
+        next (err);
+    }
 }
 // Delete an article
-exports.delete = (req, res, next) => {
-    Article.findById(req.params.id, (err, foundArticle) => {
-        if (err) return next(err);
+exports.delete = async (req, res, next) => {
+    try {
+        const foundArticle = await Article.findById(req.params.id);
 
         if (foundArticle.author == req.userId) {
-            Article.findByIdAndDelete(foundArticle.id, (err, deletedArticle) => {
-                if (err) next(err);
+            const deletedArticle = await Article.findByIdAndDelete(foundArticle.id);
 
-                /* TODO: Remove article from Tag and delete Comments of that article */
-                
-                res.json({ message: "Article deleted successfully" });
-            });
-        } else {
-            res.json({ message: "Not Authorized" });
+            /* TODO: Remove article from Tag and delete Comments of that article */
+            res.json({ message: "Article successfully deleted" });
         }
-    });
+    } catch (err) {
+        next (err);
+    }
 }
 // Like an article
-exports.like = (req, res, next) => {
-    
-    User.findById(req.userId, (err, foundUser) => {
-        if (err) return next(err);
+exports.like = async (req, res, next) => {
+    try {
+        const foundUser = await User.findById(req.userId);
 
-        if (foundUser.favourites.includes(req.params.id)) {
-            return res.json({ message: "Already Liked!" });
+        if(foundUser.favourites.includes(req.params.id)) {
+            /* TODO - unlike post */
+            res.json({ message: "Already Liked" });
         } else {
-            Article.findByIdAndUpdate(req.params.id, { $inc: { likes: 1 } }, (err, foundArticle) => {
-                if (err) return next(err);
-                
-                User.findByIdAndUpdate(req.userId, { $push: { favourites: req.params.id } }, { upsert: true }, (err, updatedUser) => {
-                    if (err) return next(err);
-                    
-                    res.json({ message: "Post liked" });
-                });
-        
-            });
+            await Article.findByIdAndUpdate(req.params.id, { $inc: { likes: 1 } });
+
+            await User.findByIdAndUpdate(req.userId, { $push: { favourites: req.params.id }});
+
+            res.json({ message: "Post liked" });
         }
-    });
+    } catch (err) {
+        next (err);
+    }
 }
 // Get comments on an article
-exports.getComments = (req, res, next) => {
-    Article
-    .findById(req.params.id)
-    .populate({
-        path: "comments"
-    })
-    .exec((err, article) => {
-        if (err) return next(err);
-        
-        res.json({ comments: article.comments });
-    });
+exports.getComments = async (req, res, next) => {
+    try {
+        const article = await Article.findById(req.params.id).populate({
+            path: "comments"
+        });
+
+        res.json({ comments: article.comments })
+    } catch (err) {
+        next (err);
+    }
 }
 // Add comment on article
-exports.addComment = (req, res, next) => {
+exports.addComment = async (req, res, next) => {
     const comment = { ...req.body, author: req.userId, article: req.params.id };
     
-    Comment.create(comment, (err, createdComment) => {
-        if (err) return next(err);
+    try {
+        const createdComment = await Comment.create(comment);
 
-        Article.findByIdAndUpdate(req.params.id, { $push: { comments: createdComment.id } }, (err, updatedArticle) => {
-            if (err) return next(err);
+        await Article.findByIdAndUpdate(req.params.id, { $push: { comments: createdComment.id } });
 
-            res.json({ message: "Comment Added!" });
-        });
-    });
+        res.json({ message: "comment added" });
+    } catch (err) {
+        next (err);
+    }
 }
