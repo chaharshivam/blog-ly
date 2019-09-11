@@ -8,12 +8,13 @@ const showdown = require('showdown');
 
 const convertor = new showdown.Converter({ noHeaderId: true });
 // All articles
-exports.all =  (req, res, next) => {
-    Article.find({}, (err, articles) => {
-        if (err) return next(err);
-
-        res.status(200).json({ articles });
-    });
+exports.all =  async (req, res, next) => {
+    try {
+       const articles = await Article.find().skip(10 * req.query.page).limit(10);
+       res.status(200).json({ articles });
+    } catch (err) {
+        next(err);
+    }
 }
 // Create an article
 exports.create = (req, res, next) => {
