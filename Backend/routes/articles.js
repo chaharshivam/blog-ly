@@ -4,7 +4,6 @@ const article = require('../controllers/article');
 const auth = require('../middlewares/auth');
 
 /* GET all articles */
-/* TODO: Pagination */
 router.get('/', article.all);
 
 /* POST - create article */
@@ -20,7 +19,7 @@ router.patch('/:id', auth.verifyToken, article.update);
 router.delete('/:id', auth.verifyToken, article.delete);
 
 /* POST - Like an article */
-router.post('/:id/like', auth.verifyToken, article.like);
+router.put('/:id/like', auth.verifyToken, article.like);
 
 /* TODO: unlike logic */
 
@@ -28,6 +27,8 @@ router.post('/:id/like', auth.verifyToken, article.like);
 router.get('/:id/comments', article.getComments);
 
 /* POST - create comment on article */
-router.post('/:id/comments', auth.verifyToken, article.addComment);
+router.put('/:id/comments', auth.verifyToken, article.addComment);
+
+/* TODO: Delete comment */ 
 
 module.exports = router;
