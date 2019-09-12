@@ -7,8 +7,9 @@ const userSchema = new mongoose.Schema({
         unique: true,
         minlength: 4
     },
+    bio: String,
     name: String,
-    photo: String,
+    image: String,
     email: {
         type: String,
         unique: true,
@@ -44,7 +45,8 @@ userSchema.pre('save', function (next) {
     });
 });
 
-userSchema.methods.validatePassword = function (textPassword, cb) {
+userSchema.methods.validatePassword = async function (textPassword, cb) {
+    
     bcrypt.compare(textPassword, this.password, (err, isValidated) => {
         if (err) return next(err);
 
