@@ -1,11 +1,11 @@
 const User = require('../models/users');
 const auth = require('../middlewares/auth');
 
-exports.getAllUsers = async (req, res, next) => {
+exports.currentUser = async (req, res, next) => {
   try {
-    const users = await User.find();
+    const user = await User.findById(req.userId);
 
-    res.json({ users });
+    res.json({ profile: user });
   }  catch (err) {
     next (err);
   }
@@ -13,7 +13,7 @@ exports.getAllUsers = async (req, res, next) => {
 // Get user profile
 exports.profile = async (req, res, next) => {
   try {
-    const currentUser = await User.findById(req.params.id);
+    const currentUser = await User.findOne({ username: req.params.username });
 
     res.json ({ profile: currentUser });
   } catch (err) {
@@ -59,8 +59,8 @@ exports.login = async (req, res, next) => {
 // Update user
 exports.update = async (req, res, next) => {
   try {
-    if (req.userId === req.params.id) {
-      await User.findByIdAndUpdate(req.params.id, req.body);
+    if (req.userId) {
+      await User.findByIdAndUpdate(req.userId, req.body);
 
       res.json({ message: "User successfully updated" });
     } else {
@@ -73,12 +73,12 @@ exports.update = async (req, res, next) => {
 // Follow user
 exports.follow = async (req, res, next) => {
   try {
-    const otherUser = await User.findById(req.params.id);
+    const otherUser = await User.findOne({ username: req.params.username });
     const currentUser = await User.findById(req.userId);
     
     if (!currentUser.following.includes(otherUser.id)) {
-      await User.findByIdAndUpdate(currentUser.id, { $push: { followers: otherUser.id } });
-      await User.findByIdAndUpdate(otherUser.id, { $push: { following: currentUser.id } });
+      await User.findByIdAndUpdate(currentUser.id, { $push: { following: otherUser.id } });
+      await User.findByIdAndUpdate(otherUser.id, { $push: { followers: currentUser.id } });
     }
     
     const profile = {
@@ -96,28 +96,22 @@ exports.follow = async (req, res, next) => {
 // Unfollow user
 exports.unfollow = async (req, res, next) => {
   try {
-    const otherUser = await User.findById(req.params.id);
+    const otherUser = await User.findOne({ username: req.params.username });
     const currentUser = await User.findById(req.userId);
-
+  
     if (currentUser.following.includes(otherUser.id)) {
       // Remove from following list of current user
-      currentUser.following.splice(currentUser.following.indexOf(otherUser.id), 1);
-
-      await User.findByIdAndUpdate(currentUser.id, { following: currentUser.following });
-
+      await User.findByIdAndUpdate(currentUser.id, { $pull: { following: otherUser.id }});
       // Remove from followers list of other user
-      otherUser.followers.splice(otherUser.followers.indexOf(currentUser.id), 1);
-
-      await User.findByIdAndUpdate(otherUser.id, { followers: otherUser.followers });
+      await User.findByIdAndUpdate(otherUser.id, { $pull: { followers: currentUser.id }});
     }
-
+    // Extract profile of unfollowed user
     const profile = {
       username: otherUser.username,
       bio: otherUser.bio,
       image: otherUser.image,
       following: false
     }
-
     res.json ({ profile });
   } catch (err) {
     next (err);

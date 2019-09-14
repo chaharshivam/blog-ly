@@ -3,11 +3,11 @@ const router = express.Router();
 const user = require('../controllers/user');
 const auth = require('../middlewares/auth');
 
-/* GET users listing. */
-router.get('/', auth.verifyToken, user.getAllUsers);
-
 /* GET current user */
-router.get('/:id', user.profile);
+router.get('/', auth.verifyToken, user.currentUser);
+
+/* GET user profile */
+router.get('/:username', user.profile);
 
 /* POST a User */
 router.post('/', user.register);
@@ -16,12 +16,12 @@ router.post('/', user.register);
 router.post('/login', user.login);
 
 /* PATCH Update User */
-router.patch('/:id', auth.verifyToken, user.update);
+router.put('/', auth.verifyToken, user.update);
 
 /* Follow user */
-router.put('/:id/follow', auth.verifyToken, user.follow);
+router.put('/:username/follow', auth.verifyToken, user.follow);
 
 /* Unfollow user */
-router.delete('/:id/follow', auth.verifyToken, user.unfollow);
+router.delete('/:username/follow', auth.verifyToken, user.unfollow);
 
 module.exports = router;
