@@ -9,26 +9,30 @@ router.get('/', article.all);
 /* POST - create article */
 router.post('/', auth.verifyToken, article.create);
 
-/* GET article by ID */
-router.get('/:id', auth.verifyToken, article.read);
+/* GET - articles from people I follow */
+router.get('/feed', auth.verifyToken, article.feed);
 
-/* PATCH - Update an article */ 
-router.patch('/:id', auth.verifyToken, article.update);
+/* GET article by ID */
+router.get('/:slug', auth.verifyToken, article.read);
+
+/* PUT - Update an article */ 
+router.put('/:slug', auth.verifyToken, article.update);
 
 /* DELETE - Delete an article */
-router.delete('/:id', auth.verifyToken, article.delete);
+router.delete('/:slug', auth.verifyToken, article.delete);
 
 /* POST - Like an article */
-router.put('/:id/like', auth.verifyToken, article.like);
+router.put('/:slug/like', auth.verifyToken, article.like);
 
 /* TODO: unlike logic */
-
+router.delete(':slug/like', auth.verifyToken, article.unlike);
 /* GET - get comments on article */
-router.get('/:id/comments', article.getComments);
+router.get('/:slug/comments', article.getComments);
 
 /* POST - create comment on article */
-router.put('/:id/comments', auth.verifyToken, article.addComment);
+router.put('/:slug/comments', auth.verifyToken, article.addComment);
 
-/* TODO: Delete comment */ 
+/* Delete Comment route */
+router.delete(':slug/comments/:id', auth.verifyToken, article.deleteComment);
 
 module.exports = router;
