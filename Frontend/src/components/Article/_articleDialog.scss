@@ -1,0 +1,72 @@
+.article-dialog {
+    border-bottom: 1px solid rgba($black, 0.05);
+    padding: 1rem 0;
+}
+
+.article-dialog-header {
+    margin-bottom: 0.75rem;
+}
+
+.author-avatar {
+    width: 15%;
+    margin-right: 0.5rem;
+    @include border-radius(50%);
+}
+
+.article-details {
+    flex-direction: column;
+}
+
+.author-username {
+    align-self: flex-start;
+    color: tomato;
+    font-size: 0.9rem;
+    cursor: pointer;
+    &:hover {
+        text-decoration: underline;
+    }
+}
+
+.article-created-on {
+    color: rgba($black, 0.2);
+    font-size: 0.7rem;
+}
+
+.like-btn {
+    border: 1px solid tomato;
+    padding: 0.25rem 0.5rem;
+    background: transparent;
+    @include border-radius(0.25rem);
+    &:hover {
+        background: tomato;
+
+        .heart, .like-count {
+            color: $white;
+        }
+    }
+}
+
+.heart, .like-count {
+    color: tomato;
+    margin: 0.1rem;
+    font-size: 0.8rem;
+}
+
+.article-dialog-heading {
+    font-size: 1rem;
+    color: rgba($black, 0.8);
+}
+
+.article-dialog-description {
+    font-size: 0.95rem;
+    color: rgba($black, 0.6);
+}
+
+.read-more {
+    font-size: 0.75rem;
+    color: rgba($black, 0.2);
+    cursor: pointer;
+    &:hover {
+        color: rgba($black, 0.4);
+    }
+}
