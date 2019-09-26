@@ -1,0 +1,59 @@
+.wrapper {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 1.5rem;
+}
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    color: $black;
+    background: $white;
+}
+
+.input-field {
+    width: 100%;
+    padding: 0.5rem 0.75rem;
+    margin: 0.5rem;
+    @include border-radius(0.25rem);
+    color: $black;
+    letter-spacing: 1px;
+    font-family: Arial, Helvetica, sans-serif;
+    &::placeholder {
+        color: rgba($black, 0.7);
+    }
+
+    &:focus {
+        box-shadow: $shadowAlt;
+    }
+}
+
+// Buttons
+.btn {
+    padding: 0.5rem 0.75rem;
+    margin: 0.75rem;
+    @include border-radius(0.25rem);
+    font-weight: bold;
+    font-family: Arial, Helvetica, sans-serif;
+    box-shadow: $shadowAlt;
+    color: $white;
+    letter-spacing: 1px;
+}
+
+.btn-primary {
+    background: $black;
+    &:hover {
+        background: rgba($black, 0.7);
+    }
+}
+
+.btn-secondary {
+    background: tomato;
+    &:hover {
+        background: rgba(tomato, 0.7);
+    }
+}
+
+// Forms
+.form {
+    flex-direction: column;
+}
