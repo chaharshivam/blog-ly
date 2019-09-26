@@ -1,0 +1,72 @@
+.dialog-wrapper {
+    flex-direction: column;
+    box-shadow: $shadowAlt;
+    width: 100%;
+}
+
+.btn-dialog {
+    width: 50%;
+    background: $lightGrey;
+    padding: 1rem;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: $white;
+    letter-spacing: 1px;
+    cursor: pointer;
+    border-top: 2px solid tomato;
+    border-bottom: 2px solid $lightGrey;
+    &:hover {
+        background: rgba($lightGrey, 0.7);
+    }
+}
+
+.inactive-dialog {
+    background: rgba($lightGrey, 0.7);
+    border-top: 2px solid $lightGrey;
+    box-shadow: $shadowBtn;
+}
+
+.login-dialog {
+    flex-direction: column;
+    background: $lightGrey;
+    width: 100%;
+}
+
+.login-header {
+    color: $white;
+    padding: 1rem;
+    h2 {
+        letter-spacing: 1px;
+        font-family: $raleway;
+    }
+}
+
+.o-auth {
+    font-size: 1rem;
+    margin: 0.5rem 0;
+    position: relative;
+    z-index: 3;
+    overflow: hidden;
+    p {
+        width: 50%;
+        background: $lightGrey;
+        color: rgba($black, 0.7);
+    }
+}
+
+.o-auth::after {
+    content: '';
+    position: absolute;
+    z-index: -1;
+    display: block;
+    width: 90%;
+    border: 1px solid rgba($black, 0.4);
+    border-radius: 100%;
+}
+
+@media all and (min-width: 768px) {
+    .dialog-wrapper {
+        width: 45%;
+    }
+}
