@@ -16,38 +16,58 @@ exports.all =  async (req, res, next) => {
         next (err);
     }
 }
+// Feed
+exports.feed = async (req, res, next) => {
+    try {
+        const userFeed = await User.findById(req.userId)
+                            .populate({
+                                path: "following",
+                                populate: {
+                                    path: 'articles',
+                                    model: 'Article'
+                                }
+                            })
+                            .skip(10 * req.query.page).limit(10);
+        res.josn ({ userFeed });
+    } catch (err) {
+        next (err);
+    }
+}
+
 // Create an article
-exports.create = (req, res, next) => {
-
-    let { tags, ...others } = req.body;
+exports.create = async (req, res, next) => {
+    try {
+        let { tags, ...others } = req.body;
+        
+        tags = tags.split(',');
     
-    tags = tags.split(',');
-
-    let article = {...others, author: req.userId , tags: [] };
-
-    // Create article
-    Article.create(article, (err, createdArticle) => {
-        if (err) return next(err);
-        // Create tags and put article ID in them
-        tags.forEach(tag => {
-            Tag.findOneAndUpdate({ name: tag }, { $push: { articles: [createdArticle.id] } }, { upsert: true,  new: true}, (err, upsertedTag) => {
-                if (err) return next(err);
-                // Update article with tag ID's
-                Article.findByIdAndUpdate(createdArticle.id, { $push: { tags: [upsertedTag] } }, { upsert: true, new: true }, (err, updatedArticle) => {
-                    if (err) return next(err);
-
-                    if (updatedArticle.tags.length == tags.length) {
-                        return res.status(200).json({ message: "article successfully created" });
-                    }
-                });
-            });
+        // Create slug
+        let slug = req.body.title.toLowerCase().split(' ').join('-');
+    
+        let article = {...others, author: req.userId, tags: [], slug };
+    
+        // Create article
+        const createdArticle = await Article.create(article);
+        
+        tags.forEach(async tag => {
+            // Create Tag & push article in it
+            let upsertedTag = await Tag.findOneAndUpdate({ name: tag }, { $push: { articles: createdArticle.id }}, { upsert: true, new: true});
+            // Push tags into created article
+            let updatedArticle = await Article.findByIdAndUpdate(createdArticle.id, { $push: { tags: upsertedTag.id }}, { new: true });
+            
+            if (updatedArticle.tags.length == tags.length) {
+                return res.json({ updatedArticle });
+            }
         });
-    });
+    } catch (err) {
+        console.log(err);
+        next (err);
+    }
 }
 // Read an article
 exports.read =  async (req, res, next) => {
     try {
-        const article = await Article.findById(req.params.id);
+        const article = await Article.findOne({ slug: req.params.slug });
         article.description = await convertor.makeHtml(article.description);
 
         res.json({ article });
@@ -58,9 +78,9 @@ exports.read =  async (req, res, next) => {
 }
 // Update an article
 exports.update = async (req, res, next) => {
-    // Allow only title and description updates
+    // Allow only content and description updates
     try {
-        const foundArticle = await Article.findById(req.params.id);
+        const foundArticle = await Article.findOne({ slug: req.params.slug });
 
         if (foundArticle.author == req.userId) {
             const updatedArticle = await Article.findByIdAndUpdate(foundArticle.id, req.body, { new: true });
@@ -76,11 +96,11 @@ exports.update = async (req, res, next) => {
 // Delete an article
 exports.delete = async (req, res, next) => {
     try {
-        const foundArticle = await Article.findById(req.params.id);
+        const foundArticle = await Article.findOne({ slug: req.params.slug });
 
         if (foundArticle.author == req.userId) {
             const deletedArticle = await Article.findByIdAndDelete(foundArticle.id);
-
+            
             /* TODO: Remove article from Tag and delete Comments of that article */
             res.json({ message: "Article successfully deleted" });
         }
@@ -92,9 +112,9 @@ exports.delete = async (req, res, next) => {
 exports.like = async (req, res, next) => {
     try {
         const foundUser = await User.findById(req.userId);
+        const foundArticle = await Article.findOne({ slug: req.params.slug });
 
-        if(foundUser.favourites.includes(req.params.id)) {
-            /* TODO - unlike post */
+        if (foundUser.favourites.includes(req.params.id)) {
             res.json({ message: "Already Liked" });
         } else {
             await Article.findByIdAndUpdate(req.params.id, { $inc: { likes: 1 } });
@@ -107,10 +127,27 @@ exports.like = async (req, res, next) => {
         next (err);
     }
 }
+// Unlike an article
+exports.unlike = async (req, res, next) => {
+    try {
+        const foundUser = await User.findById(req.userId);
+        const foundArticle = await Article.findOne({ slug: req.params.slug });
+
+        if (foundUser.favourites.includes(foundArticle.id)) {
+            await User.findByIdAndUpdate(req.userId, { $pull: { favourites: foundArticle.id } });
+            await Article.findByIdAndUpdate(foundArticle.id, { $inc: { likes: -1 } });
+            res.json({ message: "Post unliked" });
+        } else {
+            res.json({ message: "Already unliked" });
+        }
+    } catch (err) {
+        next (err);
+    }
+}
 // Get comments on an article
 exports.getComments = async (req, res, next) => {
     try {
-        const article = await Article.findById(req.params.id).populate({
+        const article = await Article.findOne({ slug: req.params.slug }).populate({
             path: "comments"
         });
 
@@ -126,10 +163,37 @@ exports.addComment = async (req, res, next) => {
     try {
         const createdComment = await Comment.create(comment);
 
-        await Article.findByIdAndUpdate(req.params.id, { $push: { comments: createdComment.id } });
+        await Article.findOne({ slug: req.params.slug }, { $push: { comments: createdComment.id } });
 
         res.json({ message: "comment added" });
     } catch (err) {
         next (err);
     }
+}
+// Delete a comment
+/* TODO: Change it to work with slug */
+exports.deleteComment = async (req, res, next) => {
+    Comment.findById(req.params.id, (err, foundComment) => {
+        if (err) return next(err);
+
+        if (foundComment.author == req.userId) {
+            Comment.findByIdAndDelete(req.params.id, (err, deletedComment) => {
+                if (err) return next(err);
+        
+                Article.findById(deletedComment.article, (err, foundArticle) => {
+                    if (err) return next(err);
+        
+                    const comments = foundArticle.comments.filter( elm => elm != deletedComment.id);
+        
+                    Article.findByIdAndUpdate(foundArticle.id, { comments }, (err, updatedArticle) => {
+                        if (err) return next(err);
+        
+                        res.json({ message: "Comment Successfully deleted", updatedArticle });
+                    });
+                });
+            });
+        } else {
+            res.json({ message: "Not Authorised!" });
+        }
+    });
 }
