@@ -1,34 +1,33 @@
 import React from 'react';
+import ArticleCard from './ArticleCard';
 
-function ArticleDialog(props) {
-    return (
-        <div className="article-dialog">
-            <header className="flex-between article-dialog-header">
-                <div className="author flex-start">
-                    <img className="author-avatar" src="https://static.productionready.io/images/smiley-cyrus.jpg"></img>
-                    <div className="article-details flex-start">
-                        <a>
-                            <span className="author-username">chaharshivam</span>
-                        </a>
-                        <span className="article-created-on">September 26, 2019</span>
-                    </div>
-                </div>
-                <button className="like-btn">
-                    <span className="heart">♥</span>
-                    <span className="like-count">0</span>
-                </button>
-            </header>
-            <main>
-                <h4 className="article-dialog-heading">Title</h4>
-                <p className="article-dialog-description">This is description</p>
-            </main>
-            <footer>
-                <a>
-                    <span className="read-more">Read more...</span>
-                </a>
-            </footer>
-        </div>
-    );
+class ArticleDialog extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            articles: null
+        }
+    }
+
+    componentDidMount() {
+        fetch('http://localhost:3000/api/articles')
+        .then(res => res.json())
+        .then(data => this.setState({ articles: data.articles }));
+    }
+
+    render() {
+        return (  
+            this.state.articles && this.state.articles.map(article => {
+                return (<ArticleCard 
+                    author={article.author.username}
+                    createdAt={new Date(article.createdAt).toDateString()}
+                    likes={article.likes}
+                    title={article.title}
+                    description={article.description}
+                />)
+            })      
+        );
+    }
 }
 
 export default ArticleDialog;

@@ -27,6 +27,12 @@ app.use(passport.initialize());
 // passport Strategy
 require('../Backend/middlewares/passport');
 
+app.use(function(req, res, next) {
+	res.header("Access-Control-Allow-Origin", "*"); // update to match the domain you will make the request from
+	res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+	next();
+});
+
 app.use('/api', indexRouter);
 app.use('/api/users', usersRouter);
 app.use('/api/articles', articlesRouter);
@@ -35,7 +41,7 @@ app.use('/api/comments', commentsRouter);
 // Error Handler
 app.use((err, req, res, next) => {
 	res.status(err.status || 500);
-	res.json({ message: "Error Occured" });
+	res.json({ message: "Error Occured", err });
 });
 
 module.exports = app;

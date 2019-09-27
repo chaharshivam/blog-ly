@@ -10,6 +10,7 @@ router.get('/', function(req, res, next) {
 });
 
 router.get('/auth/github', passport.authenticate('github'));
+
 router.get('/auth/github/callback', passport.authenticate('github', { failureRedirect: '/', session: false }), (req, res) => {
   
   const token = auth.generateToken({ userId: req.user.id });
@@ -18,6 +19,7 @@ router.get('/auth/github/callback', passport.authenticate('github', { failureRed
 });
 
 router.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
+
 router.get('/auth/google/callback', passport.authenticate('google', { failureRedirect: '/', session: false }), (req, res) => {
 
 	const token = auth.generateToken({ userId: req.user.id });
