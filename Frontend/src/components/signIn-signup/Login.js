@@ -11,7 +11,7 @@ class Login extends React.Component {
         }
     }
 
-    login = (e) => {
+    handleSubmit = (e) => {
         e.preventDefault();
         fetch('http://localhost:3000/api/users/login', {
             method: 'POST',
@@ -39,7 +39,7 @@ class Login extends React.Component {
                     <p>Welcome, sign in to continue</p>
                 </header>
                 <main>
-                    <form className="form flex-between" onSubmit={this.login}>
+                    <form className="form flex-between" onSubmit={this.handleSubmit}>
                         <input className="input-field" name="email" type="email" placeholder="Email" value={this.state.user.email} onChange={this.handleChange}></input>
                         <input className="input-field" name="password" type="password" placeholder="Password" value={this.state.user.password} onChange={this.handleChange}></input>
                         <input className="btn btn-primary" type="submit" value="Login"></input>

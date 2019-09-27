@@ -35,7 +35,7 @@ class Dialog extends React.Component {
                     </header>
                     <main className="flex-center">
                         {
-                            this.state.dialog === 'login' ? <Login login={this.login} /> : <Signup />
+                            this.state.dialog === 'login' ? <Login /> : <Signup />
                         }
                     </main>
                 </div>
