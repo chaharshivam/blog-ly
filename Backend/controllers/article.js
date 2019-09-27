@@ -10,7 +10,10 @@ const convertor = new showdown.Converter({ noHeaderId: true });
 // All articles
 exports.all =  async (req, res, next) => {
     try {
-       const articles = await Article.find().skip(10 * req.query.page).limit(10);
+       const articles = await Article.find()
+                            .populate("author", "username")
+                            .skip(10 * req.query.page)
+                            .limit(10);
        res.status(200).json({ articles });
     } catch (err) {
         next (err);
