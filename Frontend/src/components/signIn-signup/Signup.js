@@ -1,4 +1,5 @@
 import React from 'react';
+import { withRouter } from 'react-router-dom';
 
 class Signup extends React.Component {
     constructor(props) {
@@ -14,7 +15,7 @@ class Signup extends React.Component {
 
     handleSubmit = (e) => {
         e.preventDefault();
-        fetch('http://localhost:3000/api/users/', {
+        fetch('http://localhost:3001/api/users/', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -23,8 +24,8 @@ class Signup extends React.Component {
         })
         .then(res => res.json())
         .then(data => {
-            console.log(data);
-            this.setState({ user: { email: '', password: '', username: '' } });
+            this.props.updateUser();
+            this.props.history.push('/');
         });
     }
 
@@ -53,7 +54,7 @@ class Signup extends React.Component {
                     </div>
                 </main>
                 <footer>
-                <a href="http://localhost:3000/api/auth/github">
+                    <a href="http://localhost:3000/api/auth/github">
                         <button className="btn btn-primary">
                             Github
                         </button>
@@ -69,4 +70,4 @@ class Signup extends React.Component {
     }
 }
 
-export default Signup;
+export default withRouter(Signup);
