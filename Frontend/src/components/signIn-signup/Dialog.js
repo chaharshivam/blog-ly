@@ -1,6 +1,7 @@
 import React from 'react';
 import Login from './Login';
 import Signup from './Signup';
+import { withRouter } from 'react-router-dom';
 
 class Dialog extends React.Component {
 
@@ -12,6 +13,7 @@ class Dialog extends React.Component {
     }
 
     handleClick = dialog => {
+        this.props.history.push('/'+ dialog + '/');
         this.setState({dialog});
     }
 
@@ -35,7 +37,7 @@ class Dialog extends React.Component {
                     </header>
                     <main className="flex-center">
                         {
-                            this.state.dialog === 'login' ? <Login /> : <Signup />
+                            this.state.dialog === 'login' ? < Login updateUser={ this.props.updateUser } /> : <Signup updateUser={ this.props.updateUser } />
                         }
                     </main>
                 </div>
@@ -44,4 +46,4 @@ class Dialog extends React.Component {
     }
 }
 
-export default Dialog;
+export default withRouter(Dialog);

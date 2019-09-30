@@ -9,7 +9,7 @@ class Tags extends React.Component {
     }
 
     componentDidMount() {
-        fetch('http://localhost:3000/api/tags')
+        fetch('http://localhost:3001/api/tags')
         .then(res => res.json())
         .then(tags => this.setState({ tags: tags.tags }));
     }

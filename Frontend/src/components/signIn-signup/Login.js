@@ -1,4 +1,5 @@
 import React from 'react';
+import { withRouter } from 'react-router-dom';
 
 class Login extends React.Component {
     constructor(props) {
@@ -13,7 +14,7 @@ class Login extends React.Component {
 
     handleSubmit = (e) => {
         e.preventDefault();
-        fetch('http://localhost:3000/api/users/login', {
+        fetch('http://localhost:3001/api/users/login', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -22,8 +23,9 @@ class Login extends React.Component {
         })
         .then(res => res.json())
         .then(data => {
-            localStorage.setItem("authToken", data.authToken)
-            this.setState({ user: { email: '', password: '' } });
+            localStorage.setItem("authToken", data.authToken);
+            this.props.updateUser();
+            this.props.history.push('/');
         });
     }
 
@@ -67,4 +69,4 @@ class Login extends React.Component {
     }
 }
 
-export default Login;
+export default withRouter(Login);

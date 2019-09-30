@@ -16,10 +16,14 @@ function Header(props) {
                         <Link to="/">Home</Link>
                     </li>
                     <li className="nav-item">
-                        <Link to="/login/">Login</Link>
+                        {
+                            props.user ? <Link to="/profile/">Profile</Link> : <Link to="/login/">Login</Link>
+                        }
                     </li>
                     <li className="nav-item">
-                        <Link to="/signup/">Signup</Link>
+                        {
+                            props.user ? <Link to="/logout/" onClick={props.logout}>Logout</Link> : <Link to="/signup/">Signup</Link>
+                        }
                     </li>
                 </ul>
             </nav>

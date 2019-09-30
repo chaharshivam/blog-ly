@@ -28,7 +28,7 @@
 }
 
 .article-created-on {
-    color: rgba($black, 0.2);
+    color: $lightGrey;
     font-size: 0.7rem;
 }
 
@@ -68,5 +68,39 @@
     cursor: pointer;
     &:hover {
         color: rgba($black, 0.4);
+    }
+}
+
+.article-card {
+    margin: 0.5rem 0;
+}
+
+.article {
+    padding: 2rem;
+    background: rgba($black, 0.8);
+    box-shadow: $shadowBtn;
+    color: rgba($white, 0.9);
+    .wrapper {
+        padding: 0;
+    }
+}
+
+.follow-btn {
+    @include border-radius(0.25rem);
+    padding: 0.25rem;
+    border: 1px solid $white;
+    background: transparent;
+    color: $white;
+    &:hover {
+        background: $white;
+        color: rgba($black, 0.8);
+    }
+    margin-right: 0.5rem;
+}
+
+.article-description {
+    padding: 2rem;
+    .wrapper {
+        padding: 0;
     }
 }
