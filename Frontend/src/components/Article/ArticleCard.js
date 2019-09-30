@@ -1,4 +1,6 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
+import Article from './Article';
 
 function ArticleCard(props) {
     return (
@@ -19,13 +21,18 @@ function ArticleCard(props) {
                 </button>
             </header>
             <main>
-                <h4 className="article-dialog-heading">{props.title}</h4>
+                {
+                    <h4 className="article-dialog-heading">
+                        {props.title}
+                    </h4>
+                }
+                
                 <p className="article-dialog-description">{props.description}</p>
             </main>
             <footer>
-                <a>
+                <Link to={`${props.isUser() ? `/articles/${props.slug}` : `/login/` }`}>
                     <span className="read-more">Read more...</span>
-                </a>
+                </Link>
             </footer>
         </div>
     );
