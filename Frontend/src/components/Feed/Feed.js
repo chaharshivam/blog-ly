@@ -5,15 +5,6 @@ import Tags from './Tags';
 class Feed extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {
-            tags: null
-        }
-    }
-
-    componentDidMount() {
-        fetch('http://localhost:3000/api/tags')
-        .then(res => res.json())
-        .then(tags => this.setState({ tags: tags.tags }));
     }
 
     render() {
@@ -25,7 +16,7 @@ class Feed extends React.Component {
                             <a className="feed-btn">Global Feed</a>
                         </header>
                         <main>
-                            <ArticleDialog />
+                            <ArticleDialog isUser={this.props.isUser} />
                         </main>
                         <footer>
                             <div className="paginate flex-start">
