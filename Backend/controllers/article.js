@@ -70,7 +70,7 @@ exports.create = async (req, res, next) => {
 // Read an article
 exports.read =  async (req, res, next) => {
     try {
-        const article = await Article.findOne({ slug: req.params.slug });
+        const article = await Article.findOne({ slug: req.params.slug }).populate("author", "username");
         article.description = await convertor.makeHtml(article.description);
 
         res.json({ article });

@@ -28,7 +28,7 @@ router.get('/auth/google/callback', passport.authenticate('google', { failureRed
 });
 
 /* GET popular tags */
-router.get('/tags', function(req, res, next) {
+router.get('/tags', async function(req, res, next) {
   Tag.find({}, (err, tags) => {
     if (err) return next(err);
 
