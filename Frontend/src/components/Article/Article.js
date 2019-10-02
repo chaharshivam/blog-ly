@@ -1,4 +1,6 @@
 import React from 'react';
+import Comment from '../Comment/Comment';
+import { withRouter } from 'react-router-dom';
 
 class Article extends React.Component {
     constructor(props) {
@@ -59,9 +61,9 @@ class Article extends React.Component {
                                 className="wrapper"
                                 dangerouslySetInnerHTML={{ __html: this.state.article.description }}
                             >
-
                             </div>
                         </section>
+                        <Comment isUser={this.props.isUser}/>
                    </React.Fragment>
                 )
                }
@@ -70,4 +72,4 @@ class Article extends React.Component {
     }
 }
 
-export default Article;
+export default withRouter(Article);
