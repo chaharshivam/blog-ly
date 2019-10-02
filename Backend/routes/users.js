@@ -15,7 +15,7 @@ router.post('/', user.register);
 /* POST login */
 router.post('/login', user.login);
 
-/* PATCH Update User */
+/* PUT Update User */
 router.put('/', auth.verifyToken, user.update);
 
 /* Follow user */

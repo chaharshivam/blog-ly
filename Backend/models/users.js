@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
-
+// TODO: Add a field for own articles
 const userSchema = new mongoose.Schema({
     username: {
         type: String,
