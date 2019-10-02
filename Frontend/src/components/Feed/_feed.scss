@@ -21,6 +21,11 @@
     letter-spacing: 1px;
     padding: 0.25rem 0.75rem;
     font-size: 0.95rem;
+    background: transparent;
+}
+
+.feed-btn-active {
+    background: papayawhip;
     font-weight: 700;
     border-bottom: 3px solid tomato;
 }

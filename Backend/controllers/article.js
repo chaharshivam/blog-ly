@@ -10,8 +10,12 @@ const convertor = new showdown.Converter({ noHeaderId: true });
 // All articles
 exports.all =  async (req, res, next) => {
     try {
+        if(req.query.user) {
+            const articles = await Article.find({ author: req.query.user });
+            return res.json({ articles });
+        }
        const articles = await Article.find()
-                            .populate("author", "username")
+                            .populate("author")
                             .skip(10 * req.query.page)
                             .limit(10);
        res.status(200).json({ articles });
@@ -22,16 +26,26 @@ exports.all =  async (req, res, next) => {
 // Feed
 exports.feed = async (req, res, next) => {
     try {
-        const userFeed = await User.findById(req.userId)
-                            .populate({
-                                path: "following",
-                                populate: {
-                                    path: 'articles',
-                                    model: 'Article'
-                                }
-                            })
-                            .skip(10 * req.query.page).limit(10);
-        res.josn ({ userFeed });
+        // const userFeed = await User.findById(req.userId)
+        //                     .populate({
+        //                         path: "following",
+        //                         populate: {
+        //                             path: 'articles',
+        //                             model: 'Article'
+        //                         }
+        //                     })
+        //                     .skip(10 * req.query.page).limit(10);
+        // res.json ({ userFeed });
+        let articles = [];
+        const { following } = await User.findById(req.userId);
+        
+        following.forEach( async (userId, idx) => {
+            articles.push(...await Article.find({ author: userId }));
+            
+            if (idx === following.length - 1) {
+                return res.json({ articles });
+            }
+        });
     } catch (err) {
         next (err);
     }
@@ -70,7 +84,7 @@ exports.create = async (req, res, next) => {
 // Read an article
 exports.read =  async (req, res, next) => {
     try {
-        const article = await Article.findOne({ slug: req.params.slug }).populate("author", "username");
+        const article = await Article.findOne({ slug: req.params.slug }).populate("author");
         article.description = await convertor.makeHtml(article.description);
 
         res.json({ article });
@@ -151,7 +165,11 @@ exports.unlike = async (req, res, next) => {
 exports.getComments = async (req, res, next) => {
     try {
         const article = await Article.findOne({ slug: req.params.slug }).populate({
-            path: "comments"
+            path: "comments",
+            populate: {
+                path: "author",
+                model: 'User'
+            }
         });
 
         res.json({ comments: article.comments })
@@ -166,7 +184,7 @@ exports.addComment = async (req, res, next) => {
     try {
         const createdComment = await Comment.create(comment);
 
-        await Article.findOne({ slug: req.params.slug }, { $push: { comments: createdComment.id } });
+        await Article.findOneAndUpdate({ slug: req.params.slug }, { $push: { comments: createdComment.id } });
 
         res.json({ message: "comment added" });
     } catch (err) {
@@ -174,29 +192,18 @@ exports.addComment = async (req, res, next) => {
     }
 }
 // Delete a comment
-/* TODO: Change it to work with slug */
 exports.deleteComment = async (req, res, next) => {
-    Comment.findById(req.params.id, (err, foundComment) => {
-        if (err) return next(err);
-
+    try {
+        let foundComment = await Comment.findById(req.params.id);
         if (foundComment.author == req.userId) {
-            Comment.findByIdAndDelete(req.params.id, (err, deletedComment) => {
-                if (err) return next(err);
-        
-                Article.findById(deletedComment.article, (err, foundArticle) => {
-                    if (err) return next(err);
-        
-                    const comments = foundArticle.comments.filter( elm => elm != deletedComment.id);
-        
-                    Article.findByIdAndUpdate(foundArticle.id, { comments }, (err, updatedArticle) => {
-                        if (err) return next(err);
-        
-                        res.json({ message: "Comment Successfully deleted", updatedArticle });
-                    });
-                });
-            });
+            let deletedComment = await Comment.findByIdAndDelete(req.params.id);
+            await Article.findOneAndUpdate({ slug: req.params.slug }, { $pull: { comments: foundComment.id } });
+
+            res.json({ message: "Comment Successfully deleted", updatedArticle });
         } else {
             res.json({ message: "Not Authorised!" });
         }
-    });
+    } catch (err) {
+        res.json({ err });
+    }
 }

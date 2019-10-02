@@ -17,7 +17,12 @@ function Header(props) {
                     </li>
                     <li className="nav-item">
                         {
-                            props.user ? <Link to="/profile/">Profile</Link> : <Link to="/login/">Login</Link>
+                            props.user ? <Link to={`/users/${props.user.username}`}>Profile</Link> : <Link to="/login/">Login</Link>
+                        }
+                    </li>
+                    <li className="nav-item">
+                        {
+                            props.user ? <Link to="/articles/">New Article</Link> : ''
                         }
                     </li>
                     <li className="nav-item">

@@ -3,9 +3,14 @@ const auth = require('../middlewares/auth');
 
 exports.currentUser = async (req, res, next) => {
   try {
-    const user = await User.findById(req.userId);
+    if (req.query.favourites) {
+      const { favourites } = await User.findById(req.userId).populate("favourites");
+      return res.json({ favourites });
+    } else {
+      const user = await User.findById(req.userId);
+      res.json({ profile: user });
+    }
 
-    res.json({ profile: user });
   }  catch (err) {
     next (err);
   }
@@ -13,7 +18,8 @@ exports.currentUser = async (req, res, next) => {
 // Get user profile
 exports.profile = async (req, res, next) => {
   try {
-    const currentUser = await User.findOne({ username: req.params.username });
+    console.log('reached');
+    const currentUser = await User.findOne({ username: req.params.username }, "-password");
 
     res.json ({ profile: currentUser });
   } catch (err) {
