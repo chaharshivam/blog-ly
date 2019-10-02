@@ -151,7 +151,11 @@ exports.unlike = async (req, res, next) => {
 exports.getComments = async (req, res, next) => {
     try {
         const article = await Article.findOne({ slug: req.params.slug }).populate({
-            path: "comments"
+            path: "comments",
+            populate: {
+                path: "author",
+                model: 'User'
+            }
         });
 
         res.json({ comments: article.comments })
@@ -166,7 +170,7 @@ exports.addComment = async (req, res, next) => {
     try {
         const createdComment = await Comment.create(comment);
 
-        await Article.findOne({ slug: req.params.slug }, { $push: { comments: createdComment.id } });
+        await Article.findOneAndUpdate({ slug: req.params.slug }, { $push: { comments: createdComment.id } });
 
         res.json({ message: "comment added" });
     } catch (err) {
@@ -176,27 +180,19 @@ exports.addComment = async (req, res, next) => {
 // Delete a comment
 /* TODO: Change it to work with slug */
 exports.deleteComment = async (req, res, next) => {
-    Comment.findById(req.params.id, (err, foundComment) => {
-        if (err) return next(err);
-
+    try {
+        let foundComment = await Comment.findById(req.params.id);
         if (foundComment.author == req.userId) {
-            Comment.findByIdAndDelete(req.params.id, (err, deletedComment) => {
-                if (err) return next(err);
-        
-                Article.findById(deletedComment.article, (err, foundArticle) => {
-                    if (err) return next(err);
-        
-                    const comments = foundArticle.comments.filter( elm => elm != deletedComment.id);
-        
-                    Article.findByIdAndUpdate(foundArticle.id, { comments }, (err, updatedArticle) => {
-                        if (err) return next(err);
-        
-                        res.json({ message: "Comment Successfully deleted", updatedArticle });
-                    });
-                });
-            });
+            console.log('reached');
+            let deletedComment = await Comment.findByIdAndDelete(req.params.id);
+            // Comments getting deleted but articles's comment array is not updated
+            await Article.findOneAndUpdate({ slug: req.params.slug }, { $pull: { comments: foundComment.id } });
+
+            res.json({ message: "Comment Successfully deleted", updatedArticle });
         } else {
             res.json({ message: "Not Authorised!" });
         }
-    });
+    } catch (err) {
+        res.json({ err });
+    }
 }
