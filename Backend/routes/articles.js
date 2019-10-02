@@ -33,6 +33,6 @@ router.get('/:slug/comments', article.getComments);
 router.put('/:slug/comments', auth.verifyToken, article.addComment);
 
 /* Delete Comment route */
-router.delete(':slug/comments/:id', auth.verifyToken, article.deleteComment);
+router.delete('/:slug/comments/:id', auth.verifyToken, article.deleteComment);
 
 module.exports = router;
