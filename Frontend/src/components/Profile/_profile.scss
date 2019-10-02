@@ -1,0 +1,52 @@
+.profile-header {
+    padding: 2rem 2rem 1rem 2rem;
+    background: rgba($black, 0.8);
+    box-shadow: $shadowBtn;
+}
+
+.profile-details {
+    flex-direction: column;
+    width: 70%;
+}
+
+.profile-image {
+    @include border-radius(50%);
+    width: 10%;
+}
+.profile-image, .profile-username {
+    margin-bottom: 0.5rem;
+}
+
+.profile-username {
+    font-size: 1.25rem;
+    color: rgba(tomato, 0.9);
+}
+
+.profile-bio {
+    color: rgba($white, 0.8);
+}
+
+.profile-edit {
+    align-self: flex-end;
+    padding: 0.25rem 0.75rem;
+    margin-bottom: 0;
+    span {
+        font-size: 1.25rem;
+    }
+}
+
+.settings-form {
+    flex-direction: column;
+    width: 60%;
+}
+
+.settings-form * {
+    width: 100%;
+    border: 1px solid rgba($black, 0.2);
+}
+
+.settings-btn {
+    width: 20%;
+    align-self: flex-end;
+    margin: 0;
+}
