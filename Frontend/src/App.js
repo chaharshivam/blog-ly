@@ -4,6 +4,7 @@ import Header from './components/Header';
 import Dialog from './components/signIn-signup/Dialog';
 import Feed from './components/Feed/Feed';
 import Article from './components/Article/Article';
+import NewArticle from './components/Article/NewArticle';
 
 class App extends React.Component {
   constructor(props) {
@@ -47,7 +48,8 @@ class App extends React.Component {
           {/* <Dialog /> */}
           {/* <Feed /> */} 
   
-        <Route path="/articles/:slug" component={Article} />
+        <Route path="/articles/:slug" component={() => <Article isUser={this.isUser}/>} />
+        <Route path="/articles/" exact component={NewArticle} />
         <Route path="/login/" exact component={() => <Dialog dialog="login" updateUser={ this.updateUser } />}/>
         <Route path="/signup/" exact component={() => <Dialog dialog="signup" updateUser={ this.updateUser } />}/>
         <Route path="/" exact component={() => <Feed isUser={this.isUser}/>}/>
