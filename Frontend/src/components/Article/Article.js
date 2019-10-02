@@ -36,7 +36,7 @@ class Article extends React.Component {
                                     <h2>{this.state.article.title}</h2>
                                     <div className="flex-start article-card">
                                         <div className="author flex-start">
-                                            <img className="author-avatar" src="https://static.productionready.io/images/smiley-cyrus.jpg"></img>
+                                            <img className="author-avatar" src={this.state.article.author.image || 'https://static.productionready.io/images/smiley-cyrus.jpg'}></img>
                                             <div className="article-details flex-start">
                                                 <a>
                                                     <span className="author-username">{this.state.article.author.username}</span>
