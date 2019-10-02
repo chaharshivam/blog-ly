@@ -1,0 +1,59 @@
+.add-comment {
+    flex-direction: column;
+    @include border-radius(0.25rem);
+    border: 1px solid rgba($black, 0.2);
+    box-shadow: $shadowAlt;
+    background: rgba($lightGrey, 0.1);
+    width: 60%;
+    input {
+        align-self: flex-end;
+    }
+}
+
+.comment-box {
+    width: 100%;
+    padding: 0.5rem 1rem;
+    border-bottom: 1px solid rgba($black, 0.2);
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.comment-card-container {
+    flex-direction: column;
+}
+
+.comment-card {
+    @include border-radius(0.25rem);
+    width: 60%;
+    border: 1px solid rgba($black, 0.2);
+    margin-bottom: 1rem;
+
+    .author-avatar {
+        width: 8%;
+        vertical-align: middle;
+    }
+}
+
+.comment-description {
+    padding: 0.5rem 1rem;
+    margin-bottom: 1rem;
+    color: rgba($black, 0.8);
+}
+
+.comment-author {
+    border-top: 1px solid rgba($black, 0.2);
+    padding: 0.5rem 1rem;
+    background: rgba($lightGrey, 0.1);
+}
+
+.comment-author-username, .comment-date {
+    font-size: 0.75rem;
+    margin-right: 0.25rem;
+    color: $lightGrey;
+}
+
+.comment-delete {
+    margin-left: 2rem;
+    &:hover {
+        transform: scale(1.25);
+    }
+}
