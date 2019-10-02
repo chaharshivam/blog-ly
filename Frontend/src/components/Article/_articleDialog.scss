@@ -101,6 +101,21 @@
 .article-description {
     padding: 2rem;
     .wrapper {
+        border-bottom: 1px solid rgba($black, 0.2);
+        min-height: 80vh;
         padding: 0;
+    }
+}
+
+.article-form {
+    flex-direction: column;
+    margin-top: 1rem;
+    width: 80%;
+    input[type="text"], textarea {
+        border: 1px solid rgba($black, 0.2);
+    }
+    input[type="submit"] {
+        align-self: flex-end;
+        margin-right: 0;
     }
 }
