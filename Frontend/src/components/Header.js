@@ -22,6 +22,11 @@ function Header(props) {
                     </li>
                     <li className="nav-item">
                         {
+                            props.user ? <Link to="/articles/">New Article</Link> : ''
+                        }
+                    </li>
+                    <li className="nav-item">
+                        {
                             props.user ? <Link to="/logout/" onClick={props.logout}>Logout</Link> : <Link to="/signup/">Signup</Link>
                         }
                     </li>
