@@ -23,7 +23,7 @@ class Login extends React.Component {
         })
         .then(res => res.json())
         .then(data => {
-            localStorage.setItem("authToken", data.authToken);
+            localStorage.setItem("authToken", data.authToken || null);
             this.props.updateUser();
             this.props.history.push('/');
         });
