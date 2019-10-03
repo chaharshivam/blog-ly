@@ -128,15 +128,15 @@ exports.delete = async (req, res, next) => {
 // Like an article
 exports.like = async (req, res, next) => {
     try {
+        console.log(req.userId, req.params.slug);
         const foundUser = await User.findById(req.userId);
         const foundArticle = await Article.findOne({ slug: req.params.slug });
 
-        if (foundUser.favourites.includes(req.params.id)) {
+        if (foundUser.favourites.includes(req.params.slug)) {
             res.json({ message: "Already Liked" });
         } else {
-            await Article.findByIdAndUpdate(req.params.id, { $inc: { likes: 1 } });
-
-            await User.findByIdAndUpdate(req.userId, { $push: { favourites: req.params.id }});
+            await Article.findByIdAndUpdate(foundArticle.id, { $inc: { likes: 1 } });
+            await User.findByIdAndUpdate(req.userId, { $push: { favourites: req.params.slug }});
 
             res.json({ message: "Post liked" });
         }
@@ -150,9 +150,9 @@ exports.unlike = async (req, res, next) => {
         const foundUser = await User.findById(req.userId);
         const foundArticle = await Article.findOne({ slug: req.params.slug });
 
-        if (foundUser.favourites.includes(foundArticle.id)) {
+        if (foundUser.favourites.includes(foundArticle.slug)) {
             await User.findByIdAndUpdate(req.userId, { $pull: { favourites: foundArticle.id } });
-            await Article.findByIdAndUpdate(foundArticle.id, { $inc: { likes: -1 } });
+            await Article.findOneAndUpdate({ slug: req.params.slug }, { $inc: { likes: -1 } });
             res.json({ message: "Post unliked" });
         } else {
             res.json({ message: "Already unliked" });

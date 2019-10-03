@@ -24,6 +24,7 @@ class Profile extends React.Component {
     }
 
     follow = () => {
+        let following = [...this.state.currentUser.following];
         fetch(`http://localhost:3001/api/users/${this.props.match.params.username}/follow`, {
             method: 'PUT',
             headers: {
@@ -32,11 +33,23 @@ class Profile extends React.Component {
             }
         })
         .then(res => res.json())
-        .then(data => console.log(data));
+        .then(data => {
+            following.push(this.state.profile._id);
+            this.setState({ currentUser: { following: following }});
+        });
     }
 
     unFollow = () => {
-
+        const following = [...this.state.currentUser.following].filter(user => user != this.state.profile._id);
+        fetch(`http://localhost:3001/api/users/${this.props.match.params.username}/follow`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                'authorization': `${localStorage.authToken}`
+            }
+        })
+        .then(res => res.json())
+        .then(data => this.setState({currentUser: { following: following }}));
     }
 
     componentDidMount() {
@@ -58,7 +71,9 @@ class Profile extends React.Component {
                                 this.props.match.params.username === this.state.currentUser.username ? (
                                     <Link to={`/users/${this.state.profile.username}/settings`} className="btn btn-secondary profile-edit"><span>⚙ </span>Edit Profile</Link>
                                 ) : (
-                                        <button className="btn btn-secondary profile-edit" onClick={this.follow}><span>+ </span>Follow {this.state.profile.username}</button>
+                                        this.state.currentUser.following.includes(this.state.profile._id) ?
+                                        <button className="btn btn-secondary profile-edit" onClick={this.unFollow}><span>- </span>Unfollow {this.state.profile.username}</button>
+                                        : <button className="btn btn-secondary profile-edit" onClick={this.follow}><span>+ </span>Follow {this.state.profile.username}</button>
                                     )
                             }
                         </div>
