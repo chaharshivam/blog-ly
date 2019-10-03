@@ -1,11 +1,17 @@
 const User = require('../models/users');
 const auth = require('../middlewares/auth');
+const Article = require('../models/articles');
 
 exports.currentUser = async (req, res, next) => {
   try {
     if (req.query.favourites) {
-      const { favourites } = await User.findById(req.userId).populate("favourites");
-      return res.json({ favourites });
+      const { favourites } = await User.findById(req.userId);
+      const favs = [];
+      favourites.forEach(async (slug, idx) => {
+        favs.push(...await Article.find({ slug }));
+        if(idx === favourites.length - 1) { return res.json({ favourites: favs }); }
+      });
+
     } else {
       const user = await User.findById(req.userId);
       res.json({ profile: user });
